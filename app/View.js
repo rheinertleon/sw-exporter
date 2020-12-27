@@ -10,11 +10,8 @@ import Help from './pages/Help';
 const { remote } = require('electron');
 const plugins = remote.getGlobal('plugins');
 const pluginRoutes = plugins
-  .filter(plugin => plugin.routes && Array.isArray(plugin.routes))
-  .map(plugin =>
-    plugin.routes.map(route => <Route key={plugin.pluginName + route.name} exact path={'/plugin' + route.path} component={route.component} />)
-  )
-  .flat();
+  .filter(plugin => plugin.route && plugin.route.component)
+  .map(plugin => <Route key={plugin.pluginName} exact path={'/plugin/' + plugin.pluginName} component={plugin.route.component} />);
 
 ReactDOM.render(
   <BrowserRouter>

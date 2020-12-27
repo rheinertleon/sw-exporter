@@ -48,25 +48,22 @@ class Layout extends React.Component {
 
   render() {
     const pluginMenuItems = plugins
-      .filter(plugin => plugin.routes && Array.isArray(plugin.routes))
-      .map(plugin =>
-        plugin.routes.map(route => {
-          return (
-            <Menu.Item
-              name={route.name}
-              key={plugin.pluginName + route.name}
-              link
-              active={this.state.activeItem === route.name}
-              data-path={'plugin' + route.path}
-              onClick={this.navigateFromElement.bind(this)}
-            >
-              <Icon name={'puzzle piece'} />
-              {route.name}
-            </Menu.Item>
-          );
-        })
-      )
-      .flat();
+      .filter(plugin => plugin.route && plugin.route.component)
+      .map(plugin => {
+        return (
+          <Menu.Item
+            name={plugin.pluginName}
+            key={plugin.pluginName}
+            link
+            active={this.state.activeItem === plugin.pluginName}
+            data-path={'plugin/' + plugin.pluginName}
+            onClick={this.navigateFromElement.bind(this)}
+          >
+            <Icon name={'puzzle piece'} />
+            {plugin.route.menuItemText || plugin.pluginName}
+          </Menu.Item>
+        );
+      });
 
     return (
       <div>
