@@ -6,7 +6,9 @@ import Mousetrap from 'mousetrap';
 
 import Head from '../components/Head';
 
-const appVersion = require('electron').remote.app.getVersion();
+const { remote } = require('electron');
+const appVersion = remote.app.getVersion();
+const plugins = remote.getGlobal('plugins');
 
 class Layout extends React.Component {
   constructor() {
@@ -45,6 +47,27 @@ class Layout extends React.Component {
   }
 
   render() {
+    const pluginMenuItems = plugins
+      .filter(plugin => plugin.routes && Array.isArray(plugin.routes))
+      .map(plugin =>
+        plugin.routes.map(route => {
+          return (
+            <Menu.Item
+              name={route.name}
+              key={plugin.pluginName + route.name}
+              link
+              active={this.state.activeItem === route.name}
+              data-path={'plugin' + route.path}
+              onClick={this.navigateFromElement.bind(this)}
+            >
+              <Icon name={'puzzle piece'} />
+              {route.name}
+            </Menu.Item>
+          );
+        })
+      )
+      .flat();
+
     return (
       <div>
         {this.state.compactMode ? null : <Head />}
@@ -68,6 +91,7 @@ class Layout extends React.Component {
               <Icon name="help circle" />
               Help
             </Menu.Item>
+            {pluginMenuItems}
             <span id="version">v{appVersion}</span>
           </Menu>
         )}
